@@ -17,6 +17,7 @@ public class Statement {
     public Statement(){
         LocalDate dateOfCreation = LocalDate.now();
         this.movement = new Movement(Action.CREATE, date("10/01/2020"));
+        this.amount = 0;
 
     }
     public Statement(Movement movement, Integer amount){

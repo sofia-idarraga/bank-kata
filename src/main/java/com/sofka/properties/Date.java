@@ -21,8 +21,7 @@ public class Date {
 
     @Override
     public String toString() {
-        return "Date{" +
-                "date=" + date +
-                '}';
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return date.format(formatter);
     }
 }

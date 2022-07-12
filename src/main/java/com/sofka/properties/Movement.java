@@ -3,7 +3,7 @@ package com.sofka.properties;
 import java.time.LocalDate;
 
 public class Movement {
-    public Action action;
+    Action action;
     public Date date;
 
     public Movement(Action action, Date date){

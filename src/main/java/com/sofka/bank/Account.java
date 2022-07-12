@@ -2,14 +2,9 @@ package com.sofka.bank;
 
 
 import com.sofka.properties.Action;
-
 import com.sofka.properties.Date;
 import com.sofka.properties.Movement;
-
-
 import java.util.ArrayList;
-
-import static com.sofka.properties.Movement.findAction;
 import static com.sofka.bank.Statement.actionOfStatement;
 
 
@@ -17,7 +12,6 @@ public class Account {
 
 
     private ArrayList<Statement> statements = new ArrayList<>();
-    private int balance;
 
     public Account(Statement statement){
         statements.add(statement);
@@ -26,9 +20,8 @@ public class Account {
         Movement movement = new Movement(Action.DEPOSIT, date);
         Statement statement = new Statement(movement,amount);
         statements.add(statement);
-        balance += amount;
         System.out.println(statement);
-        System.out.println(balance);
+
 
     }
 
@@ -36,9 +29,8 @@ public class Account {
         Movement movement = new Movement(Action.WITHDRAWAL, date);
         Statement statement = new Statement(movement,amount);
         statements.add(statement);
-        balance -= amount;
         System.out.println(statement);
-        System.out.println(balance);
+
 
     }
 
@@ -46,23 +38,68 @@ public class Account {
         Movement movement = new Movement(Action.TRANSFERENCE, date);
         Statement statement = new Statement(movement,amount);
         statements.add(statement);
-        balance -= amount;
         System.out.println(statement);
-        System.out.println(balance);
+
     }
 
     public void printStatements() {
-        System.out.println("------------------------");
-        System.out.println("Date \t|"+"Credit \t|"+"Debit \t|"+ "Transfer \t|"+ "Balance \t|");
+        System.out.println("-------------------------------------------------------------");
+        System.out.printf("%10s %10s %10s %10s %10s", "Date", "Credit", "Debit ", "Transfer", "Balance");
+        System.out.println();
+        System.out.println("-------------------------------------------------------------");
 
+        int balance = 0;
         for (Statement statement:statements) {
-                Action action = actionOfStatement(statement);
+            Action action = actionOfStatement(statement);
+            balance = calculateNewBalance(action, statement, balance);
+            evaluateStatement(action, statement, balance);
         }
 
     }
 
-    public void print creditStatements(Movement movement){
-        System.out.println(movement.date+" \t"+"Debit | \t"+ "Transfer | \t"+ "Balance | \t");
+    public void printCreditStatements(Movement movement, Statement statement, int balance){
+        System.out.format("%10s %10s %10s %10s %10s",movement.date, statement.amount, "", "", balance);
+        System.out.println();
+    }
+
+    public void printDebitStatements(Movement movement, Statement statement, int balance){
+        System.out.format("%10s %10s %10s %10s %10s", movement.date,"",statement.amount,"",balance);
+        System.out.println();
+    }
+
+    public void printTransferStatements(Movement movement, Statement statement, int balance){
+        System.out.format("%10s %10s %10s %10s %10s", movement.date,"","",statement.amount, balance);
+        System.out.println();
+    }
+
+    private int calculateNewBalance(Action action, Statement statement, int balance){
+        if (action == Action.CREATE){
+            return 0;
+        }
+        if(action == Action.DEPOSIT){
+            return balance+statement.amount;
+        }
+        if(action == Action.WITHDRAWAL ){
+            return balance-statement.amount;
+        }
+        if (action == Action.TRANSFERENCE){
+            return balance-statement.amount;
+
+        }
+        return 0;
+    }
+
+    public void evaluateStatement(Action action, Statement statement, int balance){
+        if(action == Action.DEPOSIT){
+            printCreditStatements(statement.movement, statement, balance);
+        }
+        if(action == Action.WITHDRAWAL){
+            printDebitStatements(statement.movement, statement, balance);
+        }
+        if (action == Action.TRANSFERENCE){
+            printTransferStatements(statement.movement, statement, balance);
+        }
+
     }
 
 
